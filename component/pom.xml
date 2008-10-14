@@ -16,56 +16,53 @@
   </organization>
   <inceptionYear>2003</inceptionYear>
   <packaging>sakai-component</packaging>
-  <properties>
-    <deploy.target>components</deploy.target>
-  </properties>
-  <dependencies>
-<!-- Needed for the sample provider
-		-->
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-sample-provider</artifactId>
-    </dependency>
-<!-- -->
-<!-- Needed for the JLDAP Provider
+	<dependencies>
+		<!-- Needed for the sample provider
+
+			<dependency>
+			  <groupId>org.sakaiproject</groupId>
+			  <artifactId>sakai-sample-provider</artifactId>
+			</dependency>
+		 -->
+		<!-- Needed for the JLDAP Provider -->
 		<dependency>
 			<groupId>org.sakaiproject</groupId>
 			<artifactId>sakai-jldap-provider</artifactId>
 		</dependency>
-		-->
-<!-- Needed for the Kerberos Provider
+		<!-- Needed for the Kerberos Provider -->
 		<dependency>
 			<groupId>org.sakaiproject</groupId>
 			<artifactId>sakai-kerberos-provider</artifactId>
 		</dependency>
-	 	-->
-<!-- Needed for the IMS Enterprise Provider
+		<!-- Needed for the IMS Enterprise Provider
+				<dependency>
+					<groupId>org.sakaiproject</groupId>
+					<artifactId>sakai-imsent-provider</artifactId>
+				</dependency>
+				 -->
+		<!--
+					Needed for the (new as of Sakai 2.3) CM-based
+					AuthzGroupProvider and legacy CourseManagementProvider
+				-->
 		<dependency>
 			<groupId>org.sakaiproject</groupId>
-			<artifactId>sakai-imsent-provider</artifactId>
+			<artifactId>sakai-coursemanagement-authz-provider-impl</artifactId>
 		</dependency>
-	 	-->
-<!--
-			Needed for the (new as of Sakai 2.3) CM-based
-			AuthzGroupProvider and legacy CourseManagementProvider
-		-->
-    <dependency>
-      <groupId>org.sakaiproject</groupId>
-      <artifactId>sakai-coursemanagement-authz-provider-impl</artifactId>
-    </dependency>
-<!-- Needed for the Federated provider
+		<!-- Needed for the Federated provider -->
 		<dependency>
 			<groupId>org.sakaiproject</groupId>
 			<artifactId>sakai-federating-provider</artifactId>
 		</dependency>
-		-->
-<!-- Needed for the All Hands Provider
-		<dependency>
-			<groupId>org.sakaiproject</groupId>
-			<artifactId>sakai-allhands-provider</artifactId>
-		</dependency>
-	 	-->
-  </dependencies>
+		<!-- Needed for the All Hands Provider
+				<dependency>
+					<groupId>org.sakaiproject</groupId>
+					<artifactId>sakai-allhands-provider</artifactId>
+				</dependency>
+				 -->
+	</dependencies>
+	<properties>
+    <deploy.target>components</deploy.target>
+  </properties>
   <build>
     <resources />
   </build>
