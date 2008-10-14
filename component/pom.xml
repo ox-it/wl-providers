@@ -28,13 +28,13 @@
       <version>${sakai.version}</version>
     </dependency>
 <!-- -->
-<!-- Needed for the JLDAP Provider 
+<!-- Needed for the JLDAP Provider --> 
 		<dependency>
 			<groupId>org.sakaiproject</groupId>
 			<artifactId>sakai-jldap-provider</artifactId>
 			<version>${sakai.version}</version>
 		</dependency>
-	
+<!--	
 		<dependency> 
 			<groupId>openldap</groupId> 
 			<artifactId>ldap</artifactId> 
