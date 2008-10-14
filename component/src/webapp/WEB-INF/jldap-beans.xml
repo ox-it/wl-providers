@@ -13,15 +13,15 @@
 		
 		<!-- Required. Host name or address of your LDAP server -->
 		<property name="ldapHost">
-			<value>ldap.university.edu</value>
+			<value>ldap.oak.ox.ac.uk</value>
 		</property>
 
 		<!-- Optional. LDAP connection port. Typically defaults to 
 			JLDAPDirectoryProvider.DEFAULT_LDAP_PORT (389). Secured
 			connections are usually on 636 -->
-		<!-- property name="ldapPort">
-			<value>389</value>
-		</property-->
+		<property name="ldapPort">
+			<value>636</value>
+		</property>
 
 		<!--  If secureConnection is true, a keystore location must be provided
 			unless javax.net.ssl.trustStore system property has already been 
@@ -50,9 +50,9 @@
 
 		<!-- Optional. Enables/disables secure LDAP connections.
 			defaults to JLDAPDirectoryProvider.DEFAULT_IS_SECURE_CONNECTION (false) -->
-		<!-- property name="secureConnection">
-			<value>false</value>
-		</property -->
+		<property name="secureConnection">
+			<value>true</value>
+		</property>
 
 		<!-- Optional. If secureConnection is true, this socket factory
 			will be assigned globally to LDAPConnections. Defaults to an
@@ -65,14 +65,14 @@
 
 		<!-- Optional. Indicate if connection allocation should
 			implicitly bind as ${ldapUser}. Defaults to false -->
-		<!-- property name="autoBind">
-			<value>false</value>
-		</property -->
+		<property name="autoBind">
+			<value>true</value>
+		</property>
 
 		<!-- Optional, but usually specified. Base DN for directory searches. -->
-		<!--  property name="basePath">
-			<value>attr=value,attr=value,attr=value</value>
-		</property -->
+		<property name="basePath">
+			<value>ou=people,dc=oak,dc=ox,dc=ac,dc=uk</value>
+		</property>
 
 		<!-- Optional. Indicate if connections should follow
 			referrals. Defaults to  
@@ -193,7 +193,7 @@
     example describes availabel configuration options for SimpleLdapAttributeMapper
     (the default LdapAttributeMapper implementation). -->
 	<bean id="edu.amc.sakai.user.LdapAttributeMapper"
-			class="edu.amc.sakai.user.SimpleLdapAttributeMapper"
+			class="edu.amc.sakai.user.OakLdapAttributeMapper"
 			init-method="init"
 			singleton="true">
 			
@@ -201,24 +201,28 @@
 		names expected by the application. Values are physical LDAP
 		attribute names. If not specified or empty, defaults to
 		AttributeMappingConstants.DEFAULT_ATTR_MAPPINGS. -->
-		<!-- property name="attributeMappings">
+		<property name="attributeMappings">
 			<map>
-				<entry key="login"><value>cn</value></entry>         
+			    <!-- Note: Our mapper extracts the desired value from the one 
+			    that is actually returned. -->
+				<entry key="login"><value>oakPrimaryPrincipal</value></entry>         
 				<entry key="firstName"><value>givenName</value></entry> 
-				<entry key="preferredFirstName"><value>preferredName</value></entry>
-				<entry key="lastName"><value>sn</value></entry> 
-				<entry key="email"><value>email</value></entry>  
-				<entry key="groupMembership"><value>groupMembership</value></entry>   
-				<entry key="jpegPhoto"><value>jpegPhoto</value></entry>   
+				<entry key="lastName"><value>sn</value></entry>
+			    <!-- Note: When populating a user object from LDAP, we use this
+			    "official" value. When searching for a user, we use the 
+			    multi-valued *oakAlternativeMail* attribute (which includes this
+			    value). -->
+				<entry key="email"><value>mail</value></entry>  
+				<entry key="groupMembership"><value>none</value></entry>     
 			</map>
-		</property -->
+		</property>
 		
 		<!-- Several options for calculating Sakai user types based
 		on LDAP attributes. Defaults to an instance of EmptyStringUserTypeMapper -->
 		<property name="userTypeMapper">
 			<!-- Select one of the following beans -->
-			<ref bean="edu.amc.sakai.user.EmptyStringUserTypeMapper" />
-			<!-- ref bean="edu.amc.sakai.user.EntryAttributeToUserTypeMapper" /-->
+			<!-- ref bean="edu.amc.sakai.user.EmptyStringUserTypeMapper" /-->
+			<ref bean="edu.amc.sakai.user.EntryAttributeToUserTypeMapper" />
 			<!-- ref bean="edu.amc.sakai.user.EntryContainerRdnToUserTypeMapper" /-->
 			<!-- ref bean="edu.amc.sakai.user.StringUserTypeMapper" /-->
 		</property>
@@ -273,7 +277,7 @@
 		attribute mappings associated with this LdapAttributeMapper 
 		instance. -->
 		<property name="logicalAttributeName">
-			<value>groupMembership</value>
+			<value>oakStatus</value>
 		</property>
 				
 		<!-- Optional. Defaults to false -->
