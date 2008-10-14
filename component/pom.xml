@@ -27,20 +27,20 @@
       <artifactId>sakai-sample-provider</artifactId>
     </dependency>
 <!-- -->
-<!-- Needed for the JLDAP Provider
+<!-- Needed for the JLDAP Provider --> 
 		<dependency>
 			<groupId>org.sakaiproject</groupId>
 			<artifactId>sakai-jldap-provider</artifactId>
-			
+			<version>${sakai.version}</version>
 		</dependency>
-
-		<dependency>
-			<groupId>openldap</groupId>
-			<artifactId>ldap</artifactId>
- 			<version>2005.03.29</version>
-		</dependency>
-	-->
-<!-- Needed for the Kerberos Provider
+<!--	
+		<dependency> 
+			<groupId>openldap</groupId> 
+			<artifactId>ldap</artifactId> 
+ 			<version>2005.03.29</version> 
+		</dependency> 
+	--> 	
+<!-- Needed for the Kerberos Provider 
 		<dependency>
 			<groupId>org.sakaiproject</groupId>
 			<artifactId>sakai-kerberos-provider</artifactId>
