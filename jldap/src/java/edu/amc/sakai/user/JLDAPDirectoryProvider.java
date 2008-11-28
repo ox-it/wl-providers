@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.user.api.AuthenticationIdUDP;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryProvider;
 import org.sakaiproject.user.api.UserEdit;
@@ -56,7 +57,7 @@ import com.novell.ldap.LDAPSocketFactory;
  * @author David Ross, Albany Medical College
  * @author Rishi Pande, Virginia Tech
  */
-public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnectionManagerConfig
+public class JLDAPDirectoryProvider implements UserDirectoryProvider, AuthenticationIdUDP, LdapConnectionManagerConfig
 {
 	/** Default LDAP connection port */
 	public static final int DEFAULT_LDAP_PORT = 389;
@@ -583,6 +584,31 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 			return false;
 		}
 
+	}
+
+	public boolean getUserbyAid(String aid, UserEdit user)
+	{
+		LdapUserData foundUserData = getUserByAid(aid, user, null);
+		if ( foundUserData == null ) {
+			return false;
+		}
+		if ( user != null ) {
+			mapUserDataOntoUserEdit(foundUserData, user);
+		}
+		return true;
+	}
+
+	public LdapUserData getUserByAid(String aid, UserEdit user,
+			LDAPConnection conn) {
+		String filter = ldapAttributeMapper.getFindUserBtAidFilter(aid);
+		LdapUserData mappedEntry = null;
+		try {
+			mappedEntry = (LdapUserData) searchDirectoryForSingleEntry(filter,
+					null, null, null, null);
+		} catch (LDAPException e) {
+			M_log.error("Failed to find user for AID: " + aid, e);
+		}
+		return mappedEntry;
 	}
 
 	/**

@@ -38,6 +38,11 @@ public abstract class AttributeMappingConstants {
 	public static final String LOGIN_ATTR_MAPPING_KEY = "login";
 	
 	/** Key into {@link #DEFAULT_ATTR_MAPPINGS} representing the logical
+	 * name of a user entry's authentication (aka Sakai "AID") attribute
+	 */
+	public static final String AUTHENTICATION_ATTR_MAPPING_KEY = "aid";
+	
+	/** Key into {@link #DEFAULT_ATTR_MAPPINGS} representing the logical
 	 * name of a user entry's given name attribute
 	 */
 	public static final String FIRST_NAME_ATTR_MAPPING_KEY = "firstName";
@@ -61,6 +66,11 @@ public abstract class AttributeMappingConstants {
 	 * the physical name of a user entry's login (aka Sakai "EID") attribute
 	 */
 	public static final String DEFAULT_LOGIN_ATTR = "cn";
+	
+	/** Default value in {@link #DEFAULT_ATTR_MAPPINGS} representing
+	 * the physical name of a user entry's authentication (aka Sakai "AID") attribute
+	 */
+	public static final String DEFAULT_AUTHENTICATION_ATTR = "dn";
 	
 	/** Default value in {@link #DEFAULT_ATTR_MAPPINGS} representing
 	 * the physical name of a user entry's given name attribute
@@ -92,6 +102,7 @@ public abstract class AttributeMappingConstants {
 	static {
 		
 		DEFAULT_ATTR_MAPPINGS.put(LOGIN_ATTR_MAPPING_KEY, DEFAULT_LOGIN_ATTR);
+		DEFAULT_ATTR_MAPPINGS.put(AUTHENTICATION_ATTR_MAPPING_KEY, DEFAULT_AUTHENTICATION_ATTR);
 		DEFAULT_ATTR_MAPPINGS.put(FIRST_NAME_ATTR_MAPPING_KEY, DEFAULT_FIRST_NAME_ATTR);
 		DEFAULT_ATTR_MAPPINGS.put(LAST_NAME_ATTR_MAPPING_KEY, DEFAULT_LAST_NAME_ATTR);
 		DEFAULT_ATTR_MAPPINGS.put(EMAIL_ATTR_MAPPING_KEY, DEFAULT_EMAIL_ATTR);
