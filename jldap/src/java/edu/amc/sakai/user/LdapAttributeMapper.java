@@ -62,6 +62,14 @@ public interface LdapAttributeMapper {
 	public String getFindUserByEidFilter(String eid);
 
 	/**
+	 * Output a filter string for searching the directory with
+	 * the specified user aid as a key.
+	 * @param aid a user authentication id.
+	 * @return an LDAP search filter
+	 */
+	public String getFindUserBtAidFilter(String aid);
+	
+	/**
 	 * Maps attribites from the specified <code>LDAPEntry</code> onto
 	 * a {@link LdapUserData}.
 	 * 
