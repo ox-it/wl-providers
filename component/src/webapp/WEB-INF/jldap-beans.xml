@@ -124,9 +124,9 @@
 			Defaults to JLDAPDirectoryProvider.DEFAULT_POOLING (false). 
 			Has no effect if ldapConnectionManager has been explicitly
 			assigned (unless that object honors this flag, of course). -->
-		<!--  property name="pooling">
-			<value>false</value>
-		</property -->
+		<property name="pooling">
+			<value>true</value>
+		</property>
 
 		<!-- Optional. Maxmimum number of connections in the pool
 			Defaults to JLDAPDirectoryProvider.DEFAULT_POOL_MAX_CONNS (10) -->
