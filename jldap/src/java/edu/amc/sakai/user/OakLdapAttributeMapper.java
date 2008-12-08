@@ -22,11 +22,19 @@ public class OakLdapAttributeMapper extends SimpleLdapAttributeMapper {
         super.mapUserDataOntoUserEdit( userData, userEdit );
         // Override the value set by the super class:
         userEdit.setEid(oakPrimaryPrincipalToLoginName(userData.getEid()));
+        // Override value set in superclass:
+        userEdit.setFirstName(firstName(userData));
     }
     
     private String oakPrimaryPrincipalToLoginName( String value ) {
         return value.substring( KRB_PREFIX.length(), 
             value.indexOf( SUFFIX.charAt( 0 ), KRB_PREFIX.length() ) );
+    }
+    
+    private String firstName( LdapUserData ud ) {
+        int i = (ud.getFirstName()!= null)?ud.getFirstName().lastIndexOf( " "+ud.getLastName() ):-1;
+        return (i > 0) ? ud.getFirstName().substring( 0, i ) 
+                        : ud.getProperties().getProperty( "givenName" );
     }
 
     /**
