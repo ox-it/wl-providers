@@ -21,9 +21,12 @@
 
 package edu.amc.sakai.user;
 
+import java.text.MessageFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -59,7 +62,9 @@ public class SimpleLdapAttributeMapper implements LdapAttributeMapper {
 	 * values are physical attr names.
 	 */
 	private Map<String,String> attributeMappings;
-    
+
+	private Map<String,MessageFormat> valueMappings;
+
     /**
      * Keys are physical attr names, values are collections of
      * logical attr names. Essentially an inverse copy of
@@ -110,7 +115,13 @@ public class SimpleLdapAttributeMapper implements LdapAttributeMapper {
 						userTypeMapper + "]");
 			}
 		}
-				
+		if ( valueMappings == null ) {
+			valueMappings = Collections.EMPTY_MAP;
+			if ( M_log.isDebugEnabled() ) {
+				M_log.debug("init(): created default value mapper [mapper = " +
+						valueMappings + "]");
+			}
+		}
 	}
 	
 	/**
@@ -120,8 +131,13 @@ public class SimpleLdapAttributeMapper implements LdapAttributeMapper {
 		
 		String emailAttr = 
 			attributeMappings.get(AttributeMappingConstants.EMAIL_ATTR_MAPPING_KEY);
-		return emailAttr + "=" + escapeSearchFilterTerm(emailAddr);
-		
+		MessageFormat valueFormat = valueMappings.get(AttributeMappingConstants.LOGIN_ATTR_MAPPING_KEY);
+		if (valueFormat == null) {
+			return emailAttr + "=" + escapeSearchFilterTerm(emailAddr);
+		} else {
+			valueFormat = (MessageFormat) valueFormat.clone();
+			return emailAttr + "=" + escapeSearchFilterTerm(valueFormat.format(new Object[]{emailAddr}));
+		}
 	}
 
 	/**
@@ -129,16 +145,27 @@ public class SimpleLdapAttributeMapper implements LdapAttributeMapper {
 	 */
 	public String getFindUserByEidFilter(String eid) {
 		
-		String eidAttr = 
+		String eidAttr =
 			attributeMappings.get(AttributeMappingConstants.LOGIN_ATTR_MAPPING_KEY);
-		return eidAttr + "=" + escapeSearchFilterTerm(eid);
-		
+		MessageFormat valueFormat = valueMappings.get(AttributeMappingConstants.LOGIN_ATTR_MAPPING_KEY);
+		if (valueFormat == null) {
+			return eidAttr + "=" + escapeSearchFilterTerm(eid);
+		} else {
+			valueFormat = (MessageFormat) valueFormat.clone();
+			return eidAttr + "=" + escapeSearchFilterTerm(valueFormat.format(new Object[]{eid}));
+		}
 	}
 
 	public String getFindUserBtAidFilter(String aid) {
-		String eidAttr = 
+		String aidAttr =
 			attributeMappings.get(AttributeMappingConstants.AUTHENTICATION_ATTR_MAPPING_KEY);
-		return eidAttr + "=" + escapeSearchFilterTerm(aid);
+		MessageFormat valueFormat = valueMappings.get(AttributeMappingConstants.AUTHENTICATION_ATTR_MAPPING_KEY);
+		if (valueFormat == null) {
+			return aidAttr + "=" + escapeSearchFilterTerm(aid);
+		} else {
+			valueFormat = (MessageFormat) valueFormat.clone();
+			return aidAttr + "=" + escapeSearchFilterTerm(valueFormat.format(new Object[]{aid}));
+		}
 	}
 
 	/**
@@ -250,6 +277,11 @@ public class SimpleLdapAttributeMapper implements LdapAttributeMapper {
             LdapUserData userData, String logicalAttrName) {
         
         String attrValue = attribute.getStringValue();
+        MessageFormat format = (MessageFormat) valueMappings.get(logicalAttrName);
+        if (format != null) {
+        	format = (MessageFormat)format.clone();
+        	attrValue = (String)(format.parse(attrValue, new ParsePosition(0))[0]);
+        }
         
         if ( M_log.isDebugEnabled() ) {
         	M_log.debug("mapLdapAttributeOntoUserData() preparing to map: [logical attr name = " + logicalAttrName + 
@@ -495,6 +527,14 @@ public class SimpleLdapAttributeMapper implements LdapAttributeMapper {
 	 */
 	public void setUserTypeMapper(UserTypeMapper userTypeMapper) {
 		this.userTypeMapper = userTypeMapper;
+	}
+
+	public Map<String, MessageFormat> getValueMappings() {
+		return valueMappings;
+	}
+
+	public void setValueMappings(Map<String, MessageFormat> valueMappings) {
+		this.valueMappings = valueMappings;
 	}
 
 }
