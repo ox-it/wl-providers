@@ -40,7 +40,7 @@ public abstract class AttributeMappingConstants {
 	/** Key into {@link #DEFAULT_ATTR_MAPPINGS} representing the logical
 	 * name of a user entry's authentication (aka Sakai "AID") attribute
 	 */
-	public static final String AUTHENTICATION_ATTR_MAPPING_KEY = "authentication";
+	public static final String AUTHENTICATION_ATTR_MAPPING_KEY = "aid";
 	
 	/** Key into {@link #DEFAULT_ATTR_MAPPINGS} representing the logical
 	 * name of a user entry's given name attribute
