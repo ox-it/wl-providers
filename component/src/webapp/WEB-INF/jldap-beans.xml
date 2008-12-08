@@ -158,6 +158,10 @@
 			<value>10</value>
 		</property>
 		
+		<property name="displayIdAttribute">
+			<value>aid</value>
+		</property>
+		
 		<!-- Optional. Defaults to an instance of 
 		edu.amc.sakai.user.SimpleLdapAttributeMapper -->
 		<property name="ldapAttributeMapper">
@@ -225,7 +229,7 @@
 			    multi-valued *oakAlternativeMail* attribute (which includes this
 			    value). -->
 				<entry key="email"><value>mail</value></entry>  
-				<entry key="groupMembership"><value>none</value></entry>     
+				<entry key="groupMembership"><value>none</value></entry>
 			</map>
 		</property>
 		

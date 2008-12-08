@@ -34,6 +34,7 @@ import org.sakaiproject.memory.api.Cache;
 import org.sakaiproject.memory.api.MemoryService;
 import org.sakaiproject.user.api.ExternalUserSearchUDP;
 import org.sakaiproject.user.api.AuthenticationIdUDP;
+import org.sakaiproject.user.api.DisplayAdvisorUDP;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryProvider;
 import org.sakaiproject.user.api.UserEdit;
@@ -58,7 +59,7 @@ import com.novell.ldap.LDAPSocketFactory;
  * @author David Ross, Albany Medical College
  * @author Rishi Pande, Virginia Tech
  */
-public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnectionManagerConfig, ExternalUserSearchUDP, AuthenticationIdUDP
+public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnectionManagerConfig, ExternalUserSearchUDP, AuthenticationIdUDP, DisplayAdvisorUDP
 {
 	/** Default LDAP connection port */
 	public static final int DEFAULT_LDAP_PORT = 389;
@@ -184,6 +185,12 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 	 * Implements things like user EID blacklists. */
 	private EidValidator eidValidator;
 	
+	/** Attribute to use with displayId is asked for. {@see DisplayAdvisorUDP} */
+	private String displayIdAttribute;
+
+	/** Attribute to use when displayName is asked for. {@see DisplayAdvisorUDP} */
+	private String displayNameAttribute;
+
 	/**
 	 * Defaults to an anon-inner class which handles {@link LDAPEntry}(ies)
 	 * by passing them to {@link #mapLdapEntryOntoUserData(LDAPEntry)}, the
@@ -1605,6 +1612,55 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 			boolean authenticateWithProviderFirst) {
 		this.authenticateWithProviderFirst = authenticateWithProviderFirst;
 	}
+	public String getDisplayId(User user) {
+		if(displayIdAttribute != null) {
+			String displayId = user.getProperties().getProperty(displayIdAttribute);
+			if (displayId != null && displayId.length() > 0) {
+				return displayId;
+			}
+		}
+		return user.getEid();
+	}
+
+	public String getDisplayName(User user) {
+		if (displayNameAttribute != null) {
+			String displayName = user.getProperties().getProperty(displayNameAttribute);
+			if (displayName != null && displayName.length() > 0) {
+				return displayName;
+			}
+		}
+		// From BaseUserDirectoryService
+		StringBuilder buf = new StringBuilder(128);
+		if (user.getFirstName() != null)
+			buf.append(user.getFirstName());
+		if (user.getLastName() != null) {
+			buf.append(" ");
+			buf.append(user.getLastName());
+		}
+
+		if (buf.length() == 0) {
+			return user.getEid();
+		} else {
+			return buf.toString();
+		}
+	}
+
+	public void setDisplayIdAttribute(String displayIdAttribute) {
+		this.displayIdAttribute = displayIdAttribute;
+	}
+
+	public String getDisplayIdAttribute() {
+		return displayIdAttribute;
+	}
+
+	public void setDisplayNameAttribute(String displayNameAttribute) {
+		this.displayNameAttribute = displayNameAttribute;
+	}
+
+	public String getDisplayNameAttribute() {
+		return displayNameAttribute;
+	}
+
 	
 	/**
 	 * Access the configured search scope for all filters executed by
