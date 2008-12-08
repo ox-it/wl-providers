@@ -193,7 +193,7 @@
     example describes availabel configuration options for SimpleLdapAttributeMapper
     (the default LdapAttributeMapper implementation). -->
 	<bean id="edu.amc.sakai.user.LdapAttributeMapper"
-			class="edu.amc.sakai.user.SimpleLdapAttributeMapper"
+			class="edu.amc.sakai.user.OakLdapAttributeMapper"
 			init-method="init"
 			singleton="true">
 			
@@ -207,7 +207,8 @@
 			    that is actually returned. -->
 				<entry key="login"><value>oakPrimaryPersonID</value></entry>
 				<entry key="aid"><value>oakPrimaryPrincipal</value></entry>
-				<entry key="firstName"><value>givenName</value></entry> 
+				<!-- Note: We parse first name out of the display name ;-). -->
+				<entry key="firstName"><value>displayName</value></entry> 
 				<entry key="lastName"><value>sn</value></entry>
 			    <!-- Note: When populating a user object from LDAP, we use this
 			    "official" value. When searching for a user, we use the 
@@ -215,6 +216,8 @@
 			    value). -->
 				<entry key="email"><value>mail</value></entry>  
 				<entry key="groupMembership"><value>none</value></entry>
+				<!-- Note: this gets mapped as an additional property. -->
+				<entry key="givenName"><value>givenName</value></entry> 
 			</map>
 		</property>
 		
