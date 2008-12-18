@@ -34,5 +34,6 @@
 	<classpathentry kind="var" path="M2_REPO/jmock/jmock/1.1.0/jmock-1.1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jmock/jmock-cglib/1.1.0/jmock-cglib-1.1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.8/log4j-1.2.8.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/memory-api"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

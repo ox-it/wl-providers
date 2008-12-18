@@ -24,14 +24,14 @@ package edu.amc.sakai.user;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.sakaiproject.memory.api.Cache;
+import org.sakaiproject.memory.api.MemoryService;
 import org.sakaiproject.user.api.AuthenticationIdUDP;
 import org.sakaiproject.user.api.DisplayAdvisorUDP;
 import org.sakaiproject.user.api.User;
@@ -143,6 +143,8 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, Authentica
 	 */
 	private Map<String,String> attributeMappings;
 
+	private MemoryService memoryService;
+	
 	/**
 	 * Cache of {@link LdapUserData} objects, keyed by eid. 
 	 * {@link cacheTtl} controls TTL. 
@@ -150,8 +152,7 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, Authentica
 	 * TODO: This is a naive implementation: cache
 	 * is completely isolated on each app node.
 	 */
-	private Map<String,LdapUserData> userCache = 
-		Collections.synchronizedMap(new HashMap<String,LdapUserData>());
+	private Cache userCache;
 
 	/** TTL for cachedUsers. Defaults to {@link #DEFAULT_CACHE_TTL} */
 	private long cacheTtl = DEFAULT_CACHE_TTL;
@@ -208,6 +209,7 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, Authentica
 		if ( M_log.isDebugEnabled() ) {
 			M_log.debug("init()");
 		}
+		userCache = memoryService.newCache(getClass().getName()+".userCache");
 
 		initLdapConnectionManager();
 		initLdapAttributeMapper();
@@ -1418,6 +1420,14 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, Authentica
 
 	public String getDisplayNameAttribute() {
 		return displayNameAttribute;
+	}
+
+	public MemoryService getMemoryService() {
+		return memoryService;
+	}
+
+	public void setMemoryService(MemoryService memoryService) {
+		this.memoryService = memoryService;
 	}
 
 }
