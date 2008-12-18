@@ -163,7 +163,9 @@
 			    multi-valued *oakAlternativeMail* attribute (which includes this
 			    value). -->
 				<entry key="email"><value>mail</value></entry>  
-				<entry key="groupMembership"><value>none</value></entry>     
+				<entry key="groupMembership"><value>none</value></entry>
+				<!-- Note: this gets mapped as an additional property. -->
+				<entry key="givenName"><value>givenName</value></entry> 
 			</map>
 		</property>
 		

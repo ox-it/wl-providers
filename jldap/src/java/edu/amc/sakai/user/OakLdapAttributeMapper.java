@@ -22,7 +22,7 @@ public class OakLdapAttributeMapper extends SimpleLdapAttributeMapper {
         super.mapUserDataOntoUserEdit( userData, userEdit );
         // Override the value set by the super class:
         userEdit.setEid(oakPrimaryPrincipalToLoginName(userData.getEid()));
-        // Override value set in superclass (parse "displayName"):
+        // Override value set in superclass:
         userEdit.setFirstName(firstName(userData));
     }
     
@@ -31,10 +31,16 @@ public class OakLdapAttributeMapper extends SimpleLdapAttributeMapper {
             value.indexOf( SUFFIX.charAt( 0 ), KRB_PREFIX.length() ) );
     }
     
-    private String firstName( LdapUserData ud )
-    {
-        return ud.getFirstName().substring( 0,
-            ud.getFirstName().lastIndexOf( ud.getLastName() ) - 1 );
+    private String firstName( LdapUserData ud ) {
+        /*
+         * We parse the first name from the display name by stripping out the
+         * surname, shifted 1 position to the left to avoid a trailing
+         * whitespace. If the display name doesn't include the surname then we 
+         * just resort to givenName - middle initial(s) and all!
+         */
+        int i = ud.getFirstName().lastIndexOf( ud.getLastName() );
+        return (i != -1) ? ud.getFirstName().substring( 0, i - 1 ) 
+                        : ud.getProperties().getProperty( "givenName" );
     }
 
     /**
