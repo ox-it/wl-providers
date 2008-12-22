@@ -67,6 +67,7 @@ public class JLDAPDirectoryProviderTest extends MockObjectTestCase {
 				return userData;
 			}
 		};
+		provider.setMemoryService(new TestMemoryService());
 		mockEidValidator = mock(EidValidator.class);
 		eidValidator = (EidValidator)mockEidValidator.proxy();
 		provider.setEidValidator(eidValidator);
