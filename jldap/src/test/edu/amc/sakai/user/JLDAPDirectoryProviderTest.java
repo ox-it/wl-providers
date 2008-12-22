@@ -34,6 +34,7 @@ public class JLDAPDirectoryProviderTest extends TestCase {
 	
 	protected void setUp() {
 		provider = new JLDAPDirectoryProvider();
+		provider.setMemoryService(new TestMemoryService());
 		provider.init();
 	}
 	
