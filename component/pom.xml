@@ -29,6 +29,11 @@
 			<groupId>org.sakaiproject</groupId>
 			<artifactId>sakai-jldap-provider</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>uk.ac.ox.oucs</groupId>
+			<artifactId>external-groups-impl</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 		<!-- Needed for the Kerberos Provider -->
 		<dependency>
 			<groupId>org.sakaiproject</groupId>
