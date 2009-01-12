@@ -31,6 +31,7 @@ import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPConstraints;
 import com.novell.ldap.LDAPException;
 import com.novell.ldap.LDAPResponseQueue;
+import com.novell.ldap.LDAPSocketFactory;
 
 /**
  * Extension of standard <code>LDAPConnection</code> that attempts to return
@@ -54,7 +55,15 @@ public class PooledLDAPConnection extends LDAPConnection {
 	private boolean bindAttempted = false;
 	
 	private long birthdate = new Date().getTime();
-
+	
+	PooledLDAPConnection() {
+		this(null);
+	}
+	
+	PooledLDAPConnection(LDAPSocketFactory socketFactory) {
+		super(socketFactory);
+	}
+	
 	/**
 	 * protect against pooled connections leaking out of the pool
 	 */
