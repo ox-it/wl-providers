@@ -67,7 +67,6 @@ public class SimpleLdapConnectionManager implements LdapConnectionManager {
 			}
 			initKeystoreLocation();
 			initKeystorePassword();
-			LDAPConnection.setSocketFactory(config.getSecureSocketFactory());
 		}
 			
 	}
@@ -81,7 +80,7 @@ public class SimpleLdapConnectionManager implements LdapConnectionManager {
 			M_log.debug("getConnection()");
 		}
 		
-		LDAPConnection conn = new LDAPConnection();
+		LDAPConnection conn = new LDAPConnection(config.getSecureSocketFactory());
 		applyConstraints(conn);
 		connect(conn);
 
