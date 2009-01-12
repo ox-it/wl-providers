@@ -28,6 +28,7 @@ import org.apache.commons.pool.PoolableObjectFactory;
 import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPConstraints;
 import com.novell.ldap.LDAPException;
+import com.novell.ldap.LDAPSocketFactory;
 import com.novell.ldap.LDAPTLSSocketFactory;
 
 /**
@@ -61,6 +62,8 @@ public class PooledLDAPConnectionFactory implements PoolableObjectFactory {
 	private LDAPConstraints standardConstraints;
 
 	private LdapConnectionLivenessValidator livenessValidator;
+	
+	private LDAPSocketFactory socketFactory;
 
 	public PooledLDAPConnectionFactory() {
 		this.livenessValidator = newDefaultConnectionLivenessValidator();
@@ -101,7 +104,7 @@ public class PooledLDAPConnectionFactory implements PoolableObjectFactory {
     }
     
     protected PooledLDAPConnection newConnection() {
-    	return new PooledLDAPConnection();
+    	return new PooledLDAPConnection(socketFactory);
     }
 
     /**
@@ -279,6 +282,7 @@ public class PooledLDAPConnectionFactory implements PoolableObjectFactory {
 				throw new RuntimeException("unable to encode bind password", e);
 			}
 		}
+		this.socketFactory = connectionManager.getConfig().getSecureSocketFactory();
 		
 		// determine if we are using TLS
 		useTLS = (connectionManager.getConfig().isSecureConnection() &&
