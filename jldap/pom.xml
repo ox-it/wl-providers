@@ -36,9 +36,9 @@
       <version>${sakai.commons.lang.version}</version>
     </dependency>
     <dependency>
-      <groupId>openldap</groupId>
-      <artifactId>ldap</artifactId>
-      <version>2005.03.29</version>
+      <groupId>com.novell.ldap</groupId>
+      <artifactId>jldap</artifactId>     
+      <version>2008.03.01</version>
     </dependency>
     <dependency>
       <groupId>jmock</groupId>

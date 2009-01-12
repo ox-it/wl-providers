@@ -15,7 +15,6 @@
 	<classpathentry kind="src" path="component/src/webapp"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/openldap/ldap/2005.03.29/ldap-2005.03.29.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/authz-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/user-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/util-api"/>
@@ -36,5 +35,6 @@
 	<classpathentry kind="var" path="M2_REPO/jmock/jmock-cglib/1.1.0/jmock-cglib-1.1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.8/log4j-1.2.8.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/memory-api"/>
+	<classpathentry kind="var" path="M2_REPO/com/novell/ldap/jldap/2008.03.01/jldap-2008.03.01.jar" sourcepath="/M2_REPO/com/novell/ldap/jldap/2008.03.01/jldap-2008.03.01-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
