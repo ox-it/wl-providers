@@ -56,6 +56,7 @@
 
 <!-- Uncomment and configure to use the JLDAPDirectoryProvider -->
 	<import resource="jldap-beans.xml"/>
+	<import resource="external-group-beans.xml"/>
 
 <!--	Uncomment and configure to use the Kerberos Provider.
 
