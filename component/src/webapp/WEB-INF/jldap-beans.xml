@@ -159,10 +159,6 @@
 			<value>10</value>
 		</property>
 		
-		<property name="displayIdAttribute">
-			<value>aid</value>
-		</property>
-		
 		<!-- Optional. Defaults to an instance of 
 		edu.amc.sakai.user.SimpleLdapAttributeMapper -->
 		<property name="ldapAttributeMapper">
@@ -226,22 +222,25 @@
 				<!-- Note: We parse first name out of the display name ;-). -->
 				<entry key="firstName"><value>displayName</value></entry> 
 				<entry key="lastName"><value>sn</value></entry>
-			    <!-- Note: When populating a user object from LDAP, we use this
-			    "official" value. When searching for a user, we use the 
-			    multi-valued *oakAlternativeMail* attribute (which includes this
-			    value). -->
-				<entry key="email"><value>mail</value></entry>  
+				<entry key="email"><value>mail</value></entry>
 				<entry key="groupMembership"><value>none</value></entry>
-				<!-- Note: this gets mapped as an additional property. -->
-				<entry key="givenName"><value>givenName</value></entry> 
+				<entry key="givenName"><value>givenName</value></entry>
+				<entry key="displayId"><value>oakPrimaryPrincipal</value></entry>
 			</map>
 		</property>
+		<!--
+			Note: When populating a user object from LDAP, we use this "official"
+			value. When searching for a user, we use the multi-valued
+			*oakAlternativeMail* attribute (which includes this value).
+		-->
+		<property name="searchableEmailAttributes" value="oakAlternativeMail" />
 		
 		<!-- If any of the values need manipulating with message formats they
 		can be set here. -->
 		<property name="valueMappings">
 			<map>
 				<entry key="aid"><value>krbPrincipalName={0}@OX.AC.UK,cn=OX.AC.UK,cn=KerberosRealms,dc=oak,dc=ox,dc=ac,dc=uk</value></entry>
+				<entry key="displayId"><value>krbPrincipalName={0}@OX.AC.UK,cn=OX.AC.UK,cn=KerberosRealms,dc=oak,dc=ox,dc=ac,dc=uk</value></entry>
 			</map>
 		</property>
 
