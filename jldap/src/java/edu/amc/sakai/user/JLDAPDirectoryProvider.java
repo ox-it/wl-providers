@@ -80,9 +80,6 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 	 */
 	public static final int DEFAULT_SEARCH_SCOPE = LDAPConnection.SCOPE_SUB;
 
-	/** Default LDAP user entry cache TTL */
-	public static final long DEFAULT_CACHE_TTL = 5 * 60 * 1000;
-
 	/** Default LDAP use of connection pooling */
 	public static final boolean DEFAULT_POOLING = false;
 
@@ -171,9 +168,6 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 	 * is completely isolated on each app node.
 	 */
 	private Cache userCache;
-
-	/** TTL for cachedUsers. Defaults to {@link #DEFAULT_CACHE_TTL} */
-	private long cacheTtl = DEFAULT_CACHE_TTL;
 
 	/** Handles LDAPConnection allocation */
 	private LdapConnectionManager ldapConnectionManager;
@@ -1152,18 +1146,9 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 		}
 		LdapUserData cachedUserEntry = (LdapUserData) userCache.get(eid);
 		boolean foundCachedUserEntry = cachedUserEntry != null;
-		boolean cachedUserEntryExpired = 
-			foundCachedUserEntry && 
-			((System.currentTimeMillis() - cachedUserEntry.getTimeStamp()) > cacheTtl);
-
 		if ( M_log.isDebugEnabled() ) {
 			M_log.debug("getCachedUserEntry(): cache access [found entry = " + foundCachedUserEntry + 
-					"][entry expired = " + cachedUserEntryExpired + "]");
-		}
-
-		if ( cachedUserEntryExpired ) {
-			userCache.remove(eid);
-			return null;
+					"]");
 		}
 
 		return cachedUserEntry;
@@ -1182,7 +1167,6 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 		if ( eid == null ) {
 			throw new IllegalArgumentException("Attempted to cache a user record without an eid [UserData = " + user + "]");
 		}
-		user.setTimeStamp(System.currentTimeMillis());
 
 		if ( M_log.isDebugEnabled() ) {
 			M_log.debug("cacheUserData(): [user record = " + user + "]");
@@ -1359,20 +1343,13 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 	}
 
 	/**
-	 * @return Returns the user entry cache TTL, in millis
-	 */
-	public long getCacheTTL()
-	{
-		return cacheTtl;
-	}
-
-	/**
 	 * @param timeMs
 	 *        The user entry cache TTL, in millis.
+	 * @deprecated Doesn't do anything, should use set cache TTLs on the memory service directly.
 	 */
 	public void setCacheTTL(long timeMs)
 	{
-		cacheTtl = timeMs;
+		M_log.warn("Setting of cache TTL should be done on the memory service directly now.");
 	}
 
 	/**
