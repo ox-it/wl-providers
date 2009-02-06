@@ -64,6 +64,9 @@ public class SimpleLdapAttributeMapper implements LdapAttributeMapper {
 	 */
 	private Map<String,String> attributeMappings;
 
+	/**
+	 * Formatters used for manipulating attribute values sent to and returned from LDAP.
+	 */
 	private Map<String,MessageFormat> valueMappings;
 
     /**
