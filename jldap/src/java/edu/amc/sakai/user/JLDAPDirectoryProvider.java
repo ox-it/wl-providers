@@ -980,7 +980,8 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 						"][max results = " + maxResults + "]" +
 						"][search scope = " + searchScope + "]");
 			}
-
+			long start = System.currentTimeMillis();
+			
 			LDAPSearchResults searchResults = 
 				conn.search(searchBaseDn, 
 						searchScope, 
@@ -988,7 +989,7 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 						searchResultPhysicalAttributeNames, 
 						false, 
 						constraints);
-
+			
 			List mappedResults = new ArrayList();
 			int resultCnt = 0;
 			while ( searchResults.hasMore() ) {
@@ -999,7 +1000,10 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 				}
 				mappedResults.add(mappedResult);
 			}
-
+			if (M_log.isDebugEnabled()) {
+				M_log.debug("Query took: "+ (System.currentTimeMillis() - start)+ "ms.");
+			}
+			
 			return mappedResults;
 
 		} catch (LDAPException e) {
