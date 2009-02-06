@@ -960,7 +960,8 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, Authentica
 						Arrays.toString(searchResultPhysicalAttributeNames) + 
 						"][max results = " + maxResults + "]");
 			}
-
+			long start = System.currentTimeMillis();
+			
 			LDAPSearchResults searchResults = 
 				conn.search(searchBaseDn, 
 						LDAPConnection.SCOPE_SUB, 
@@ -968,7 +969,7 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, Authentica
 						searchResultPhysicalAttributeNames, 
 						false, 
 						constraints);
-
+			
 			List mappedResults = new ArrayList();
 			int resultCnt = 0;
 			while ( searchResults.hasMore() ) {
@@ -979,7 +980,10 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, Authentica
 				}
 				mappedResults.add(mappedResult);
 			}
-
+			if (M_log.isDebugEnabled()) {
+				M_log.debug("Query took: "+ (System.currentTimeMillis() - start)+ "ms.");
+			}
+			
 			return mappedResults;
 
 		} catch (LDAPException e) {
