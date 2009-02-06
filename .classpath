@@ -36,5 +36,6 @@
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.8/log4j-1.2.8.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/memory-api"/>
 	<classpathentry kind="var" path="M2_REPO/com/novell/ldap/jldap/2008.03.01/jldap-2008.03.01.jar" sourcepath="/M2_REPO/com/novell/ldap/jldap/2008.03.01/jldap-2008.03.01-sources.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/external-groups-api"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
