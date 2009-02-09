@@ -77,6 +77,12 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, Authentica
 	public static final int DEFAULT_POOL_MAX_CONNS = 10;
 
 	public static final boolean DEFAULT_CASE_SENSITIVE_CACHE_KEYS = false;
+	
+	/** Property of the user object to store the display ID under */
+	public static final String DISPLAY_ID_PROPERTY = JLDAPDirectoryProvider.class+"-displayId";
+
+	/** Property of the user object to store the display Name under */
+	public static final String DISPLAY_NAME_PROPERTY = JLDAPDirectoryProvider.class+"-displayName";
 
 	/** Class-specific logger */
 	private static Log M_log = LogFactory.getLog(JLDAPDirectoryProvider.class);
@@ -156,12 +162,6 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, Authentica
 
 	/** Handles LDAP attribute mappings and encapsulates filter writing */
 	private LdapAttributeMapper ldapAttributeMapper;
-	
-	/** Attribute to use with displayId is asked for. {@see DisplayAdvisorUDP} */
-	private String displayIdAttribute;
-	
-	/** Attribute to use when displayName is asked for. {@see DisplayAdvisorUDP} */
-	private String displayNameAttribute;
 
 	/**
 	 * Defaults to an anon-inner class which handles {@link LDAPEntry}(ies)
@@ -1355,52 +1355,19 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, Authentica
 	}
 
 	public String getDisplayId(User user) {
-		if(displayIdAttribute != null) {
-			String displayId = user.getProperties().getProperty(displayIdAttribute);
-			if (displayId != null && displayId.length() > 0) {
+		String displayId = user.getProperties().getProperty(DISPLAY_ID_PROPERTY);
+		if (displayId != null && displayId.length() > 0) {
 				return displayId;
-			}
 		}
-		return user.getEid();
+		return null;
 	}
 
 	public String getDisplayName(User user) {
-		if (displayNameAttribute != null) {
-			String displayName = user.getProperties().getProperty(displayNameAttribute);
-			if (displayName != null && displayName.length() > 0) {
-				return displayName;
-			}
+		String displayName = user.getProperties().getProperty(DISPLAY_NAME_PROPERTY);
+		if (displayName != null && displayName.length() > 0) {
+			return displayName;
 		}
-		// From BaseUserDirectoryService
-		StringBuilder buf = new StringBuilder(128);
-		if (user.getFirstName() != null)
-			buf.append(user.getFirstName());
-		if (user.getLastName() != null) {
-			buf.append(" ");
-			buf.append(user.getLastName());
-		}
-
-		if (buf.length() == 0) {
-			return user.getEid();
-		} else {
-			return buf.toString();
-		}
-	}
-
-	public void setDisplayIdAttribute(String displayIdAttribute) {
-		this.displayIdAttribute = displayIdAttribute;
-	}
-
-	public String getDisplayIdAttribute() {
-		return displayIdAttribute;
-	}
-
-	public void setDisplayNameAttribute(String displayNameAttribute) {
-		this.displayNameAttribute = displayNameAttribute;
-	}
-
-	public String getDisplayNameAttribute() {
-		return displayNameAttribute;
+		return null;
 	}
 
 	public MemoryService getMemoryService() {
