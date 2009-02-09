@@ -9,6 +9,10 @@ public class OakLdapAttributeMapper extends MultipleEmailLdapAttributeMapper {
         super.mapUserDataOntoUserEdit( userData, userEdit );
         // Override value set in superclass:
         userEdit.setFirstName(firstName(userData));
+        String displayId = userEdit.getProperties().getProperty(JLDAPDirectoryProvider.DISPLAY_ID_PROPERTY);
+        if (displayId == null || displayId.length() == 0) {
+        	userEdit.getProperties().addProperty(JLDAPDirectoryProvider.DISPLAY_ID_PROPERTY, "none");
+        }
     }
 
     private String firstName( LdapUserData ud ) {
