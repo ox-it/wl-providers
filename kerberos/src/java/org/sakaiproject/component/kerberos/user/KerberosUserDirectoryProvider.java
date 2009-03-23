@@ -23,9 +23,7 @@ package org.sakaiproject.component.kerberos.user;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.MessageDigest;
 import java.util.Collection;
-import java.util.Hashtable;
 import java.util.Iterator;
 
 import javax.security.auth.callback.Callback;
@@ -44,8 +42,6 @@ import org.sakaiproject.component.cover.ServerConfigurationService;
 import org.sakaiproject.user.api.UserDirectoryProvider;
 import org.sakaiproject.user.api.UserEdit;
 import org.sakaiproject.util.StringUtil;
-
-import sun.misc.BASE64Encoder;
 
 /**
  * <p>
@@ -124,26 +120,6 @@ public class KerberosUserDirectoryProvider implements UserDirectoryProvider
 		m_knownusermsg = knownusermsg;
 	}
 
-	/** Configuration: Cachettl */
-	protected int m_cachettl = 5 * 60 * 1000;
-
-	/**
-	 * Configuration: Cache TTL
-	 * 
-	 * @param cachettl
-	 *        Time (in milliseconds) to cache authenticated usernames - default is 300000 ms (5 minutes)
-	 */
-	public void setCachettl(int cachettl)
-	{
-		m_cachettl = cachettl;
-	}
-
-	/**
-	 * Hash table for auth caching
-	 */
-
-	private Hashtable users = new Hashtable();
-
 	/**********************************************************************************************************************************************************************************************************************************************************
 	 * Init and Destroy
 	 *********************************************************************************************************************************************************************************************************************************************************/
@@ -202,7 +178,7 @@ public class KerberosUserDirectoryProvider implements UserDirectoryProvider
 			}
 
 			M_log.info(this + ".init()" + " Domain=" + m_domain + " LoginContext=" + m_logincontext + " RequireLocalAccount="
-					+ m_requirelocalaccount + " KnownUserMsg=" + m_knownusermsg + " CacheTTL=" + m_cachettl);
+					+ m_requirelocalaccount + " KnownUserMsg=" + m_knownusermsg );
 
 			// show the whole config if set
 			// system locations will read NULL if not set (system defaults will be used)
@@ -308,62 +284,11 @@ public class KerberosUserDirectoryProvider implements UserDirectoryProvider
 	 */
 	public boolean authenticateUser(String userId, UserEdit edit, String password)
 	{
-		// The in-memory caching mechanism is implemented here
-		// try to get user from in-memory hashtable
 		try
 		{
-			UserData existingUser = (UserData) users.get(userId);
+			boolean authKerb = authenticateKerberos(userId, password);
 
-			boolean authUser = false;
-			String hpassword = encodeSHA(password);
-
-			// Check for user in in-memory hashtable. To be a "valid, previously authenticated" user,
-			// 3 conditions must be met:
-			//
-			// 1) an entry for the userId must exist in the cache
-			// 2) the last usccessful authentication was < cachettl milliseconds ago
-			// 3) the one-way hash of the entered password must be equivalent to what is stored in the cache
-			//
-			// If these conditions are not, the authentication is performed via JAAS and, if sucessful, a new entry is created
-
-			if (existingUser == null || (System.currentTimeMillis() - existingUser.getTimeStamp()) > m_cachettl
-					|| !(existingUser.getHpw().equals(hpassword)))
-			{
-				if (M_log.isDebugEnabled()) M_log.debug("authenticateUser(): user " + userId + " not in table, querying Kerberos");
-
-				boolean authKerb = authenticateKerberos(userId, password);
-
-				// if authentication succeeds, create entry for authenticated user in cache;
-				// otherwise, remove any entries for this user from cache
-
-				if (authKerb)
-				{
-					if (M_log.isDebugEnabled())
-						M_log.debug("authenticateUser(): putting authenticated user (" + userId + ") in table for caching");
-
-					UserData u = new UserData(); // create entry for authenticated user in cache
-					u.setId(userId);
-					u.setHpw(hpassword);
-					u.setTimeStamp(System.currentTimeMillis());
-					users.put(userId, u); // put entry for authenticated user into cache
-
-				}
-				else
-				{
-					users.remove(userId);
-				}
-
-				authUser = authKerb;
-
-			}
-			else
-			{
-				if (M_log.isDebugEnabled())
-					M_log.debug("authenticateUser(): found authenticated user (" + existingUser.getId() + ") in table");
-				authUser = true;
-			}
-
-			return authUser;
+			return authKerb;
 		}
 		catch (Exception e)
 		{
@@ -601,102 +526,6 @@ public class KerberosUserDirectoryProvider implements UserDirectoryProvider
 	{
 		return false;
 	}
-
-	/**
-	 * <p>
-	 * Helper class for storing user data in an in-memory cache
-	 * </p>
-	 */
-	class UserData
-	{
-
-		String id;
-
-		String hpw;
-
-		long timeStamp;
-
-		/**
-		 * @return Returns the id.
-		 */
-		public String getId()
-		{
-			return id;
-		}
-
-		/**
-		 * @param id
-		 *        The id to set.
-		 */
-		public void setId(String id)
-		{
-			this.id = id;
-		}
-
-		/**
-		 * @param hpw
-		 *        hashed pw to put in.
-		 */
-		public void setHpw(String hpw)
-		{
-			this.hpw = hpw;
-		}
-
-		/**
-		 * @return Returns the hashed password.
-		 */
-
-		public String getHpw()
-		{
-			return hpw;
-		}
-
-		/**
-		 * @return Returns the timeStamp.
-		 */
-		public long getTimeStamp()
-		{
-			return timeStamp;
-		}
-
-		/**
-		 * @param timeStamp
-		 *        The timeStamp to set.
-		 */
-		public void setTimeStamp(long timeStamp)
-		{
-			this.timeStamp = timeStamp;
-		}
-
-	} // UserData class
-
-	/**
-	 * <p>
-	 * Hash string for storage in a cache using SHA
-	 * </p>
-	 * 
-	 * @param UTF-8
-	 *        string
-	 * @return encoded hash of string
-	 */
-
-	private synchronized String encodeSHA(String plaintext)
-	{
-
-		try
-		{
-			MessageDigest md = MessageDigest.getInstance("SHA");
-			md.update(plaintext.getBytes("UTF-8"));
-			byte raw[] = md.digest();
-			String hash = (new BASE64Encoder()).encode(raw);
-			return hash;
-		}
-		catch (Exception e)
-		{
-			M_log.warn("encodeSHA(): exception: " + e);
-			return null;
-		}
-	} // encodeSHA
 
 } // KerberosUserDirectoryProvider
 
