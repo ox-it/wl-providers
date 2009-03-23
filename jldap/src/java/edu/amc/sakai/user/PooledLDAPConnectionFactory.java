@@ -21,6 +21,11 @@
 
 package edu.amc.sakai.user;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.pool.PoolableObjectFactory;
@@ -89,7 +94,7 @@ public class PooledLDAPConnectionFactory implements PoolableObjectFactory {
 		if (log.isDebugEnabled()) log.debug("makeObject(): assigned connection ConnectionManager");
 		conn.setConstraints(standardConstraints);
 		if (log.isDebugEnabled()) log.debug("makeObject(): assigned connection constraints");
-		conn.connect(host, port);
+		conn.connect(getHost(), port);
 		if (log.isDebugEnabled()) log.debug("makeObject(): connected connection");
 		if (useTLS) {
 			if (log.isDebugEnabled()) log.debug("makeObject(): attempting to initiate TLS");
@@ -205,7 +210,7 @@ public class PooledLDAPConnectionFactory implements PoolableObjectFactory {
             try {
             	if ( !(livenessValidator.isConnectionAlive(conn)) )  {
             		if (log.isInfoEnabled())
-            			log.info("validateObject(): connection failed liveness test");
+            			log.info("validateObject(): connection failed liveness test, "+ conn.getHost());
             		conn.setActive(false);
             		if (log.isDebugEnabled()) log.debug("validateObject(): unset connection active flag on stale connection, returning false");
             		return false;
@@ -320,6 +325,34 @@ public class PooledLDAPConnectionFactory implements PoolableObjectFactory {
 	 */
 	public LdapConnectionLivenessValidator getConnectionLivenessValidator() {
 		return this.livenessValidator;
+	}
+	
+	/**
+	 * Get the host to connect to. Attempt to resolve all addresses for a hostname.
+	 * We do this resolution low down in the stack as we don't want the results cached at all.
+	 * @return A hostname or a space separated string of IP addresses to connect to. 
+	 */
+	protected String getHost() {
+		InetAddress addresses[];
+		try {
+			addresses = InetAddress.getAllByName(host);
+			if (addresses.length > 1) {
+				StringBuilder hosts = new StringBuilder();
+				// So that we don't always connect to the same host.
+				// Is need on platforms that don't do round robin DNS well.
+				Collections.shuffle(Arrays.asList(addresses));
+				for(InetAddress address: addresses) {
+					hosts.append(address.getHostAddress()+ " ");
+				}
+				return hosts.toString();
+			}
+		} catch (UnknownHostException e) {
+			if (log.isDebugEnabled()) {
+				log.debug("Failed to resolve "+ host+ " not handling now, will deal with later.");
+			}
+		}
+
+		return host;
 	}
 
 }
