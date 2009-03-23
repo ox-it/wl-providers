@@ -162,7 +162,7 @@ public class KerberosUserDirectoryProvider implements UserDirectoryProvider
 	{
 		// Full paths only from the file
 		String kerberoskrb5conf = ServerConfigurationService.getString("provider.kerberos.krb5.conf", null);
-		String kerberosauthloginconfig = ServerConfigurationService.getString("provider.kerberos.auth.login.config", null);
+		String kerberosauthloginconfig = ServerConfigurationService.getString("provider.kerberos.auth.login.config", "sakai-jaas.conf");
 		boolean kerberosshowconfig = ServerConfigurationService.getBoolean("provider.kerberos.showconfig", false);
 		String sakaihomepath = System.getProperty("sakai.home");
 
