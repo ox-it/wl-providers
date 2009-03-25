@@ -40,19 +40,11 @@
 			<artifactId>sakai-kerberos-provider</artifactId>
 		</dependency>
 		<!-- Needed for the IMS Enterprise Provider
-				<dependency>
-					<groupId>org.sakaiproject</groupId>
-					<artifactId>sakai-imsent-provider</artifactId>
-				</dependency>
-				 -->
-		<!--
-					Needed for the (new as of Sakai 2.3) CM-based
-					AuthzGroupProvider and legacy CourseManagementProvider
-				-->
 		<dependency>
 			<groupId>org.sakaiproject</groupId>
 			<artifactId>sakai-coursemanagement-authz-provider-impl</artifactId>
 		</dependency>
+		  -->
 		<!-- Needed for the Federated provider -->
 		<dependency>
 			<groupId>org.sakaiproject</groupId>
