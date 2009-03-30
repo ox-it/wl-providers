@@ -16,14 +16,8 @@ public class OakLdapAttributeMapper extends MultipleEmailLdapAttributeMapper {
     }
 
     private String firstName( LdapUserData ud ) {
-        /*
-         * We parse the first name from the display name by stripping out the
-         * surname, shifted 1 position to the left to avoid a trailing
-         * whitespace. If the display name doesn't include the surname then we 
-         * just resort to givenName - middle initial(s) and all!
-         */
-        int i = ud.getFirstName().lastIndexOf( ud.getLastName() );
-        return (i != -1) ? ud.getFirstName().substring( 0, i - 1 ) 
+        int i = (ud.getFirstName()!= null)?ud.getFirstName().lastIndexOf( " "+ud.getLastName() ):-1;
+        return (i > 0) ? ud.getFirstName().substring( 0, i ) 
                         : ud.getProperties().getProperty( "givenName" );
     }
 
