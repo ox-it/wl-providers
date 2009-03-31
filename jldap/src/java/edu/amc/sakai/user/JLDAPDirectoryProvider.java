@@ -189,6 +189,11 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, Authentica
 		}
 
 	};
+	
+	/**
+	 * Should this provider even attempt to perform authentication.
+	 */
+	private boolean attemptAuthentication = true;
 
 	private boolean caseSensitiveCacheKeys = DEFAULT_CASE_SENSITIVE_CACHE_KEYS;
 	
@@ -371,6 +376,10 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, Authentica
 	{
 		if ( M_log.isDebugEnabled() ) {
 			M_log.debug("authenticateUser(): [userLogin = " + userLogin + "]");
+		}
+		if (!attemptAuthentication) {
+			M_log.debug("Not attempting authentication as it is disabled");
+			return false;
 		}
 
 		if ( !(allowAuthentication) ) {
@@ -1330,6 +1339,10 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, Authentica
 	public void setCacheTTL(long timeMs)
 	{
 		M_log.warn("Setting of cache TTL should be done on the memory service directly now.");
+	}
+
+	public void setAttemptAuthentication(boolean attemptAuthentication) {
+		this.attemptAuthentication = attemptAuthentication;
 	}
 
 	/**
