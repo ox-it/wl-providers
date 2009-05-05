@@ -6,6 +6,7 @@
 	<classpathentry kind="src" path="cm/cm-authz-provider/src/java"/>
 	<classpathentry kind="src" path="imsent/src/java"/>
 	<classpathentry kind="src" path="kerberos/src/java"/>
+	<classpathentry kind="src" path="kerberos/src/test"/>
 	<classpathentry kind="src" path="openldap/src/java"/>
 	<classpathentry kind="src" path="sample/src/java"/>
 	<classpathentry kind="src" path="jldap-integration-test/src/test/java"/>
