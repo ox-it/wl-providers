@@ -91,6 +91,33 @@ public class KerberosUserDirectoryProvider implements UserDirectoryProvider
 	{
 		m_logincontext = logincontext;
 	}
+	
+	/** Configuration: ServiceLoginContext */
+	protected String m_servicelogincontext = "ServiceKerberosAuthentication";
+	
+	/**
+	 * Configuration: Service Authentication Name
+	 * 
+	 * @param serviceLoginContext
+	 *        The context for the service to be used from the login.config file - default "ServiceKerberosAuthentication" 
+	 */
+	public void setServiceLoginContext(String serviceLoginContext)
+	{
+		m_servicelogincontext = serviceLoginContext;
+	}
+	
+	/** Configuration: */
+	protected String m_serviceprincipal;
+
+	/**
+	 * Configuration: GSS-API Service Principal
+	 * 
+	 * @param serviceprincipal
+	 *        The name of the service principal for GSS-API. Needs to be set.
+	 */
+	public void setServicePrincipal(String serviceprincipal) {
+		this.m_serviceprincipal = serviceprincipal;
+	}
 
 	/** Configuration: RequireLocalAccount */
 	protected boolean m_requirelocalaccount = true;
@@ -173,9 +200,14 @@ public class KerberosUserDirectoryProvider implements UserDirectoryProvider
 				kerberosauthloginconfig = null;
 			}
 		}
+		
+		if (m_serviceprincipal == null)
+		{
+			throw new IllegalStateException("Service principal can't be null.");
+		}
 
-		M_log.info(this + ".init()" + " Domain=" + m_domain + " LoginContext=" + m_logincontext + " RequireLocalAccount="
-				+ m_requirelocalaccount + " KnownUserMsg=" + m_knownusermsg );
+		M_log.info(this + ".init()" + " Domain=" + m_domain + " LoginContext=" + m_logincontext + " ServiceLoginContext="+ m_servicelogincontext+ 
+				" GSS-API Principal="+ m_serviceprincipal+ " RequireLocalAccount=" + m_requirelocalaccount + " KnownUserMsg=" + m_knownusermsg );
 
 		// show the whole config if set
 		// system locations will read NULL if not set (system defaults will be used)
@@ -283,13 +315,13 @@ public class KerberosUserDirectoryProvider implements UserDirectoryProvider
 	{
 		try
 		{
-			boolean authKerb = authenticateKerberos(userId, password);
-
+			JassAuthenticate jass = new JassAuthenticate(m_serviceprincipal, m_servicelogincontext, m_logincontext);
+			boolean authKerb = jass.attemptAuthentication(userId, password);
 			return authKerb;
 		}
 		catch (Exception e)
 		{
-			if (M_log.isDebugEnabled()) M_log.debug("authenticateUser(): exception: " + e);
+			M_log.warn("authenticateUser(): exception: ", e);
 			return false;
 		}
 	} // authenticateUser
@@ -297,63 +329,6 @@ public class KerberosUserDirectoryProvider implements UserDirectoryProvider
 	/**********************************************************************************************************************************************************************************************************************************************************
 	 * Kerberos stuff
 	 *********************************************************************************************************************************************************************************************************************************************************/
-
-	/**
-	 * Authenticate the user id and pw with Kerberos.
-	 * 
-	 * @param user
-	 *        The user id.
-	 * @param password
-	 *        the user supplied password.
-	 * @return true if successful, false if not.
-	 */
-	protected boolean authenticateKerberos(String user, String pw)
-	{
-		// assure some length to the password
-		if ((pw == null) || (pw.length() == 0)) return false;
-
-		// Obtain a LoginContext, needed for authentication. Tell it
-		// to use the LoginModule implementation specified by the
-		// appropriate entry in the JAAS login configuration
-		// file and to also use the specified CallbackHandler.
-		LoginContext lc = null;
-		try
-		{
-			SakaiCallbackHandler t = new SakaiCallbackHandler();
-			t.setId(user);
-			t.setPw(pw);
-			lc = new LoginContext(m_logincontext, t);
-		}
-		catch (LoginException le)
-		{
-			if (M_log.isDebugEnabled()) M_log.debug("authenticateKerberos(): " + le.toString());
-			return false;
-		}
-		catch (SecurityException se)
-		{
-			if (M_log.isDebugEnabled()) M_log.debug("authenticateKerberos(): " + se.toString());
-			return false;
-		}
-
-		try
-		{
-			// attempt authentication
-			lc.login();
-			lc.logout();
-
-			if (M_log.isDebugEnabled()) M_log.debug("authenticateKerberos(" + user + ", pw): Kerberos auth success");
-
-			return true;
-		}
-		catch (LoginException le)
-		{
-			if (M_log.isDebugEnabled())
-				M_log.debug("authenticateKerberos(" + user + ", pw): Kerberos auth failed: " + le.toString());
-
-			return false;
-		}
-
-	} // authenticateKerberos
 
 	/**
 	 * Check if the user id is known to kerberos.
