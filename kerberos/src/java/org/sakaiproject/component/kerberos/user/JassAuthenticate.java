@@ -125,7 +125,6 @@ public class JassAuthenticate {
 			while (!clientContext.isEstablished() && !serverContext.isEstablished() && !(initTokens == null && acceptTokens == null)) {
 				Subject.doAs(userLoginContext.getSubject(), new InitiatorAction());
 				Subject.doAs(serverLoginContext.getSubject(), new AcceptorAction());
-				log.debug("Tokens exchanged.");
 				if (++exchanges > exchangeLimit) {
 					throw new RuntimeException("Too many tickets exchanged ("+ exchangeLimit+ ").");
 				}
