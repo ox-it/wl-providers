@@ -58,13 +58,25 @@ public class JassAuthenticate {
 	private int exchangeLimit = 50;
 
 	private String servicePrincipal;
-
 	private String userPrincipal;
+	
+	private boolean verifyServiceTicket = false;
+	
+	/**
+	 * Get ready for JAAS authenitcation, but don't verify a service ticket.
+	 */
+	public JassAuthenticate() {
+		verifyServiceTicket = false;
+	}
 
+	/**
+	 * Get ready for JAAS authentication but attempt todo service ticket verification.
+	 */
 	public JassAuthenticate(String serverGSS, String servicePrincipal, String userPrincipal) {
 		this.serverGSS = serverGSS;
 		this.servicePrincipal = servicePrincipal;
 		this.userPrincipal = userPrincipal;
+		verifyServiceTicket = true;
 	}
 	
 	private class InitiatorAction implements PrivilegedAction<Void> {
@@ -104,6 +116,10 @@ public class JassAuthenticate {
 				}
 				return false;
 			}
+			if(!verifyServiceTicket) {
+				log.debug("Authenticated ok and not attempting service ticket verification");
+				return true;
+			}
 			// Shouldn't ever fail
 			serverLoginContext = new LoginContext(servicePrincipal, new NullCallbackHandler());
 			serverLoginContext.login();
@@ -129,6 +145,7 @@ public class JassAuthenticate {
 					throw new RuntimeException("Too many tickets exchanged ("+ exchangeLimit+ ").");
 				}
 			}
+			log.debug("Authenticated ok and verified service ticket");
 			return true;
 		} catch (GSSException gsse) {
 			log.warn("Failed to verify ticket.", gsse);
@@ -150,5 +167,9 @@ public class JassAuthenticate {
 			}
 		}
 		return false;
+	}
+	
+	public boolean isVerifyServiceTicket() {
+		return verifyServiceTicket;
 	}
 }
