@@ -70,7 +70,7 @@ public class JassAuthenticate {
 	}
 
 	/**
-	 * Get ready for JAAS authentication but attempt todo service ticket verification.
+	 * Get ready for JAAS authentication and attempt to do service ticket verification.
 	 */
 	public JassAuthenticate(String serverGSS, String servicePrincipal, String userPrincipal) {
 		this.serverGSS = serverGSS;
