@@ -12,11 +12,11 @@ public class SimpleJassAuthenticateTest extends TestCase {
 	}
 
 	public void testGood() {
-		assertTrue(jass.attemptAuthentication("aproject", "Oa6luCah"));
+		assertTrue(jass.attemptAuthentication("username", "password"));
 	}
 	
 	public void testBad() {
-		assertFalse(jass.attemptAuthentication("asa", "as"));
+		assertFalse(jass.attemptAuthentication("username", "wrong password"));
 	}
 		
 }
