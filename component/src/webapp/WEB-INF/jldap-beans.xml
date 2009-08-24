@@ -17,7 +17,7 @@
 
 	<bean id="edu.amc.sakai.user.JLDAPDirectoryProvider"
 		class="edu.amc.sakai.user.JLDAPDirectoryProvider" init-method="init"
-		destroy-method="destroy" singleton="true">
+		destroy-method="destroy">
 		
 		<property name="memoryService">
 			<ref bean="org.sakaiproject.memory.api.MemoryService"/>
