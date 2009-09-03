@@ -19,6 +19,17 @@
   <properties>
     <deploy.target/>
   </properties>
+  <repositories>
+    <repository>
+      <id>maven-repo.oucs</id>
+      <name>OUCS Maven Repository (3rd Party)</name>
+      <url>http://maven-repo.oucs.ox.ac.uk/content/repositories/thirdparty</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
   <dependencies>
     <dependency>
       <groupId>org.sakaiproject.kernel</groupId>
