@@ -80,6 +80,8 @@ public class ThreadCheckUserDirectoryProvider implements UserDirectoryProvider {
 	public void getUsers(Collection users) {
 		if(checkThread()) {
 			wrappedProvider.getUsers(users);
+		} else {
+			users.clear();
 		}
 	}
 
