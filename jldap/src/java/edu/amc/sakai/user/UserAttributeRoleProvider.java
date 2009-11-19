@@ -68,7 +68,7 @@ public class UserAttributeRoleProvider implements RoleProvider {
 	}
 
 	public String getDisplayName(String role) {
-		return rb.getString(role);
+		return rb.getString(role, null);
 	}
 
 	public Collection<String> getAllAdditionalRoles() {
