@@ -25,9 +25,9 @@
 				<entry key="conted" value="Continuing Education"/>
 				<entry key="councildep" value="Council Departments"/>
 				<entry key="human" value="Humanities"/>
-				<entry key="mathsci" value="Mathematical, Physical & Life Sciences"/>
+				<entry key="mathsci" value="Mathematical, Physical &amp; Life Sciences"/>
 				<entry key="medsci" value="Medical Sciences"/>
-				<entry key="payetc" value="Payroll & Others"/>
+				<entry key="payetc" value="Payroll &amp; Others"/>
 				<entry key="related" value="Related"/>
 				<entry key="socsci" value="Social Sciences"/>
 				<entry key="centadm" value="UAS"/>
