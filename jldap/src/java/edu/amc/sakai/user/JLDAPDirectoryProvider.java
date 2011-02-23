@@ -89,10 +89,13 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 	public static final boolean DEFAULT_CASE_SENSITIVE_CACHE_KEYS = false;
 	
 	/** Property of the user object to store the display ID under */
-	public static final String DISPLAY_ID_PROPERTY = JLDAPDirectoryProvider.class+"-displayId";
+	public static final String DISPLAY_ID_PROPERTY = JLDAPDirectoryProvider.class.getName()+"-displayId";
 
 	/** Property of the user object to store the display Name under */
-	public static final String DISPLAY_NAME_PROPERTY = JLDAPDirectoryProvider.class+"-displayName";
+	public static final String DISPLAY_NAME_PROPERTY = JLDAPDirectoryProvider.class.getName()+"-displayName";
+	
+	/** Property of the user object to store the display ID under */
+	public static final String YEAR_OF_STUDY_PROPERTY = "yearOfStudy";
 
 	public static final boolean DEFAULT_ALLOW_AUTHENTICATION = true;
 	
