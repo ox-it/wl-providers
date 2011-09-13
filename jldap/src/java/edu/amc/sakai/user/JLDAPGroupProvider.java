@@ -36,6 +36,11 @@ public class JLDAPGroupProvider implements GroupProvider {
 		return groupManager.newGroup(dn, role);
 	}
 	
+	public boolean groupExists(String groupId) {
+		ProvidedGroup group = groupManager.getGroup(groupId);
+		return group != null;
+	}
+	
 	public Map getGroupRolesForUser(String eid) {
 		// Do subtree search on LDAP, then map to groups using the group manager.
 		String personId = MessageFormat.format("oakPrimaryPersonID={0},ou=people,dc=oak,dc=ox,dc=ac,dc=uk", eid);
