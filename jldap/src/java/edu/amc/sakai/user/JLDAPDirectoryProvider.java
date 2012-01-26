@@ -218,6 +218,12 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 	 * {@link #authenticateWithProviderFirst(String)} on a global basis.
 	 */
 	private boolean authenticateWithProviderFirst = DEFAULT_AUTHENTICATE_WITH_PROVIDER_FIRST;
+	
+	/**
+	 * The max number of results to get back from a search. Currently it's set to zero which
+	 * means that the servre limit is used.
+	 */
+	private int maxSearchResults = 0;
 
 	public JLDAPDirectoryProvider() {
 		if ( M_log.isDebugEnabled() ) {
@@ -1699,8 +1705,7 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 		List<UserEdit> users = new ArrayList<UserEdit>();
 		
 		try {
-			//no limit to the number of search results, use the LDAP server's settings.
-			List<LdapUserData> ldapUsers = searchDirectory(filter, null, null, null, null, 0);
+			List<LdapUserData> ldapUsers = searchDirectory(filter, null, null, null, null, maxSearchResults);
 			
 			for(LdapUserData ldapUserData: ldapUsers) {
 				
@@ -1735,6 +1740,19 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 	public void setSearchAliases(boolean searchAliases)
 	{
 		this.searchAliases = searchAliases;
+	}
+
+	public int getMaxSearchResults() {
+		return maxSearchResults;
+	}
+
+	/**
+	 * Sets the maximun number of results to return when searching for users.
+	 * This is useful when searching an LDAP server which doesn't limit the number of results 
+	 * @param maxSearchResults
+	 */
+	public void setMaxSearchResults(int maxSearchResults) {
+		this.maxSearchResults = maxSearchResults;
 	}
 
 }
