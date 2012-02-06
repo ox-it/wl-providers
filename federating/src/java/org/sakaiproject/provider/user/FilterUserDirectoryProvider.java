@@ -575,7 +575,13 @@ public class FilterUserDirectoryProvider implements UserDirectoryProvider, Exter
 				m_logger.debug("searchExternalUsers() criteria=" + criteria);
 			}
 			
-			users.addAll(extSearchUDP.searchExternalUsers(criteria, first, last, factory));
+			List<UserEdit> searchExternalUsers = extSearchUDP.searchExternalUsers(criteria, first, last, factory);
+			if (searchExternalUsers != null) {
+				users.addAll(searchExternalUsers);
+			} else {
+				// We throw a runtime exception so that the calling code knows something serious went wrong.
+				throw new RuntimeException("Failed to complete search on: "+ extSearchUDP.getClass()+ " of: "+ criteria);
+			}
 		}
 		
 		if ( nextProvider instanceof ExternalUserSearchUDP) {
@@ -585,7 +591,13 @@ public class FilterUserDirectoryProvider implements UserDirectoryProvider, Exter
 				m_logger.debug("nextProvider searchExternalUsers() criteria=" + criteria);
 			}
 			
-			users.addAll(extSearchUDP.searchExternalUsers(criteria, first, last, factory));
+			List<UserEdit> searchExternalUsers = extSearchUDP.searchExternalUsers(criteria, first, last, factory);
+			if (searchExternalUsers != null) {
+				users.addAll(searchExternalUsers);
+			} else {
+				// We throw a runtime exception so that the calling code knows something serious went wrong.
+				throw new RuntimeException("Failed to complete search on: "+ extSearchUDP.getClass()+ " of: "+ criteria);
+			}
 		}
 
 		return users;
