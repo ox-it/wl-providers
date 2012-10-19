@@ -18,18 +18,30 @@ import com.novell.ldap.LDAPEntry;
 import com.novell.ldap.LDAPException;
 import com.novell.ldap.LDAPSearchResults;
 
+/**
+ * This is a GroupProvider that uses LDAP for it's lookups.
+ * @author buckett
+ *
+ */
 public class JLDAPGroupProvider implements GroupProvider {
+
+	// We just ask for the DN when looking for a group
+	private static final String[] DN_ATTR = new String[]{"dn"};
 
 	private static final Log log = LogFactory.getLog(JLDAPDirectoryProvider.class);
 
 	private LdapConnectionManager connectionManager;
 	private ProvidedGroupManager groupManager;
 	private JLDAPDirectoryProvider jldapDirectoryProvider;
+
+	private String searchBase = "ou=units,dc=oak,dc=ox,dc=ac,dc=uk";
+	private String memberAttribute = "member";
+	private String personIdPattern = "oakPrimaryPersonID={0},ou=people,dc=oak,dc=ox,dc=ac,dc=uk";
+
 	
 	public void init() {
 		// Want to share the connection manager.
 		setConnectionManager(jldapDirectoryProvider.getLdapConnectionManager());
-		log.warn("Create group: "+ createGroup("oakUnitCode=oucs,ou=units,dc=oak,dc=ox,dc=ac,dc=uk", "access"));
 	}
 	
 	public ProvidedGroup createGroup(String dn, String role) {
@@ -43,11 +55,12 @@ public class JLDAPGroupProvider implements GroupProvider {
 	
 	public Map getGroupRolesForUser(String eid) {
 		// Do subtree search on LDAP, then map to groups using the group manager.
-		String personId = MessageFormat.format("oakPrimaryPersonID={0},ou=people,dc=oak,dc=ox,dc=ac,dc=uk", eid);
-		String filter = "member="+personId;
+		String personId = MessageFormat.format(personIdPattern, eid);
+		String filter = memberAttribute+ "="+personId;
+		LDAPConnection connection = null;
 		try {
-			LDAPConnection connection = connectionManager.getConnection();
-			LDAPSearchResults results = connection.search("ou=units,dc=oak,dc=ox,dc=ac,dc=uk", LDAPConnection.SCOPE_SUB, filter, new String[]{"dn"}, false);
+			connection = connectionManager.getConnection();
+			LDAPSearchResults results = connection.search(searchBase, LDAPConnection.SCOPE_SUB, filter, DN_ATTR, false);
 			HashMap<String, String> groupRoles = new HashMap<String, String>();
 			while (results.hasMore()) {
 				LDAPEntry resultEntry = results.next();
@@ -61,8 +74,11 @@ public class JLDAPGroupProvider implements GroupProvider {
 			}
 			return groupRoles;
 		} catch (LDAPException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.warn("Problem getting groups for "+ eid, e);
+		} finally {
+			if (connection != null) {
+				connectionManager.returnConnection(connection);
+			}
 		}
 		return null;
 	}
@@ -76,22 +92,22 @@ public class JLDAPGroupProvider implements GroupProvider {
 	}
 
 	public Map getUserRolesForGroup(String groupId) {
-		//TODO Need to unpack the groupId
+		//TODO Need to unpack the groupId?
 		ProvidedGroup group = groupManager.getGroup(groupId);
 		if (group != null) {
 			String dn = group.getDn();
-			LDAPConnection connection;
+			LDAPConnection connection = null;
 			try {
 				connection = connectionManager.getConnection();
-				LDAPSearchResults results = connection.search(dn, LDAPConnection.SCOPE_ONE, null, new String[]{"member"}, false);
+				LDAPSearchResults results = connection.search(dn, LDAPConnection.SCOPE_ONE, null, new String[]{memberAttribute}, false);
 				Map userRoles = new HashMap();;
 				while (results.hasMore()) {
 					LDAPEntry result = results.next();
-					LDAPAttribute member = result.getAttribute("member");
+					LDAPAttribute member = result.getAttribute(memberAttribute);
 					Enumeration values = member.getStringValues();
+					MessageFormat message = new MessageFormat(personIdPattern);
 					while (values.hasMoreElements()) {
 						String value = (String) values.nextElement();
-						MessageFormat message = new MessageFormat("oakPrimaryPersonID={0},ou=people,dc=oak,dc=ox,dc=ac,dc=uk");
 						try {
 							Object[] personIds = message.parse(value);
 							if (personIds.length == 1) {
@@ -104,8 +120,11 @@ public class JLDAPGroupProvider implements GroupProvider {
 				}
 				return userRoles;
 			} catch (LDAPException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.warn("Problem finding user roles for group: "+ groupId, e);
+			} finally {
+				if (connection != null) {
+					connectionManager.returnConnection(connection);
+				}
 			}
 		}
 		return Collections.EMPTY_MAP;
