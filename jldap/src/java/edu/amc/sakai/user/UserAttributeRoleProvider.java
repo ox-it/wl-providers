@@ -60,8 +60,7 @@ public class UserAttributeRoleProvider implements RoleProvider {
 					}
 				}
 			} catch (UserNotDefinedException e) {
-				// This really shouldn't happen as this should only be called for known users
-				log.warn("User couldn't be loaded to find additional roles: "+ userId, e);
+				// This really could happen because users can get deleted, no need to spam the logs here
 			}
 		}
 		return Collections.emptySet();
