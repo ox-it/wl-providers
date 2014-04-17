@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.user.api.ExternalUserSearchUDP;
 import org.sakaiproject.user.api.AuthenticationIdUDP;
+import org.sakaiproject.user.api.DisplayAdvisorUDP;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryProvider;
 import org.sakaiproject.user.api.UserEdit;
@@ -58,7 +59,7 @@ import com.novell.ldap.LDAPSocketFactory;
  * @author David Ross, Albany Medical College
  * @author Rishi Pande, Virginia Tech
  */
-public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnectionManagerConfig, ExternalUserSearchUDP, AuthenticationIdUDP, UsersShareEmailUDP
+public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnectionManagerConfig, ExternalUserSearchUDP, AuthenticationIdUDP, DisplayAdvisorUDP, UsersShareEmailUDP
 {
 	/** Default LDAP connection port */
 	public static final int DEFAULT_LDAP_PORT = 389;
@@ -90,6 +91,12 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 
 	/** Default LDAP maximum number of objects to query for */
 	public static final int DEFAULT_BATCH_SIZE = 200;
+	
+	/** Property of the user object to store the display ID under */
+	public static final String DISPLAY_ID_PROPERTY = JLDAPDirectoryProvider.class+"-displayId";
+
+	/** Property of the user object to store the display Name under */
+	public static final String DISPLAY_NAME_PROPERTY = JLDAPDirectoryProvider.class+"-displayName";
 
 	public static final boolean DEFAULT_ALLOW_AUTHENTICATION = true;
 	
@@ -179,7 +186,7 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 	/** Currently limited to allowing/disallowing searches for particular user EIDs.
 	 * Implements things like user EID blacklists. */
 	private EidValidator eidValidator;
-	
+
 	/**
 	 * Defaults to an anon-inner class which handles {@link LDAPEntry}(ies)
 	 * by passing them to {@link #mapLdapEntryOntoUserData(LDAPEntry)}, the
@@ -1539,6 +1546,22 @@ public class JLDAPDirectoryProvider implements UserDirectoryProvider, LdapConnec
 			boolean authenticateWithProviderFirst) {
 		this.authenticateWithProviderFirst = authenticateWithProviderFirst;
 	}
+	public String getDisplayId(User user) {
+		String displayId = user.getProperties().getProperty(DISPLAY_ID_PROPERTY);
+		if (displayId != null && displayId.length() > 0) {
+				return displayId;
+		}
+		return null;
+	}
+
+	public String getDisplayName(User user) {
+		String displayName = user.getProperties().getProperty(DISPLAY_NAME_PROPERTY);
+		if (displayName != null && displayName.length() > 0) {
+			return displayName;
+		}
+		return null;
+	}
+
 	
 	/**
 	 * Access the configured search scope for all filters executed by
